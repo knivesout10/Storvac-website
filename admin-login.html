@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — StorVac Logistics</title>
+<link rel="icon" type="image/png" href="/assets/logo-icon.png">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main>
+  <div class="container" style="max-width: 400px; padding-top: 60px;">
+    <h1>Owner Admin Login</h1>
+    <div class="card">
+      <form id="admin-login-form">
+        <div id="error-slot"></div>
+        <label for="username">Username</label>
+        <input type="text" id="username" required>
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:20px;">Log In</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+<script src="/js/common.js"></script>
+<script>
+document.getElementById("admin-login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  try {
+    const data = await api("/api/admin/login", { method: "POST", body: { username, password } });
+    setAdminToken(data.token);
+    window.location.href = "/admin.html";
+  } catch (err) {
+    document.getElementById("error-slot").innerHTML = `<div class="error-box">${err.message}</div>`;
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Booking — StorVac Logistics</title>
+<link rel="icon" type="image/png" href="/assets/logo-icon.png">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header" id="site-header"></header>
+
+<main>
+  <div class="container" style="max-width: 480px;">
+    <h1>Track a booking</h1>
+    <div class="card">
+      <label for="code-input">Booking Code</label>
+      <input type="text" id="code-input" placeholder="e.g. SV-7X4K9Q" style="text-transform:uppercase;">
+      <button class="btn btn-primary btn-block" id="track-btn" style="margin-top:16px;">Check Status</button>
+      <div id="result-slot" style="margin-top:16px;"></div>
+    </div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+<script src="/js/common.js"></script>
+<script src="/js/track.js"></script>
+</body>
+</html>

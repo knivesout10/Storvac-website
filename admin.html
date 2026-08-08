@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — StorVac Logistics</title>
+<link rel="icon" type="image/png" href="/assets/logo-icon.png">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <a href="/admin.html" class="brand">
+      <img src="/assets/logo-icon.png" alt="StorVac Logistics">
+      <span class="brand-text">Stor<span>Vac</span> Admin</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#" id="admin-logout">Log Out</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container max-900">
+    <h1>Bookings Dashboard</h1>
+
+    <div id="not-logged-in" class="card" style="display:none;">
+      <p>Please log in as admin.</p>
+      <a href="/admin-login.html" class="btn btn-primary">Admin Login</a>
+    </div>
+
+    <div id="dashboard" style="display:none;">
+      <div class="card" style="display:flex; gap:30px; flex-wrap:wrap;">
+        <div><div class="field-help">Active Bookings</div><h2 id="stat-active">—</h2></div>
+        <div><div class="field-help">Collected</div><h2 id="stat-collected">—</h2></div>
+        <div><div class="field-help">Total Revenue</div><h2 id="stat-revenue">—</h2></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+          <input type="text" id="search-box" placeholder="Search by name, booking code, or institution" style="flex:1; min-width:200px;">
+          <select id="status-filter" style="width:180px;">
+            <option value="">All statuses</option>
+            <option value="pending">Pending Payment</option>
+            <option value="paid">Stored</option>
+            <option value="ready">Ready for Pickup</option>
+            <option value="collected">Collected</option>
+          </select>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Student</th>
+                <th>Institution</th>
+                <th>Hall / Room</th>
+                <th>Items</th>
+                <th>Package</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+<script src="/js/common.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>
