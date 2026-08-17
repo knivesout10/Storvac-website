@@ -1,9 +1,9 @@
-// StorVac Logistics — Item price catalog
-// Prices are in GHS. "bonus" items are free only when the booking's total
-// ticked item quantity is 3 or more (see Terms & Conditions, NB clause).
-// If that condition is not met, a bonus item is charged at the "Other" bag rate.
+// StorVac Logistics — Item price catalog & Dynamic Quantity Calculator
+// Prices are in GHS. "bonus" items are free only when total item quantity is 3 or more.
+// If total quantity < 3, bonus items are charged at OTHER_BAG_RATE per unit.
 
 const OTHER_BAG_RATE = 20;
+const BONUS_QUALIFYING_QTY = 3;
 
 const ITEMS = [
   // Bags
@@ -31,9 +31,7 @@ const ITEMS = [
   { id: "gas_stove_big", name: "Gas Stove (Big)", category: "Others", price: 100, bonus: false },
 ];
 
-// Room Pickup Service fee schedule — replaces the old flat GHS 50.
-// Picking up specific bulky/common items costs a set fee per unit;
-// any other item picked up alongside them adds one flat GHS 10 to the trip.
+// Room Pickup Service fee schedule per unit
 const ROOM_PICKUP_RATES = {
   small_suitcase: 20,
   small_checkbag: 20,
@@ -43,7 +41,7 @@ const ROOM_PICKUP_RATES = {
   fridge_big: 40,
   microwave: 25,
 };
-const OTHER_PICKUP_FLAT_FEE = 10; // added once per booking if any non-listed item needs pickup too
+const OTHER_PICKUP_FLAT_FEE = 10; // Flat GHS 10 added once per booking if unlisted items need pickup
 
 const PACKAGES = {
   "1m": { label: "1 Month", multiplier: 1 },
@@ -51,10 +49,85 @@ const PACKAGES = {
   "2m": { label: "2 Months", multiplier: 2 },
 };
 
-const BONUS_QUALIFYING_QTY = 3; // total ticked item quantity needed for bonus items to be free
+// --- Helper Functions ---
 
 function findItem(id) {
   return ITEMS.find((i) => i.id === id);
+}
+
+/**
+ * Calculates total item cost based on selected quantities.
+ * @param {Object} itemQuantities - Object map of itemId to quantity count (e.g., { big_suitcase: 2, rice_cooker: 1 })
+ * @returns {number} Base items subtotal in GHS
+ */
+function calculateItemsTotal(itemQuantities = {}) {
+  // Calculate aggregate quantity across all items
+  const totalQty = Object.values(itemQuantities).reduce((sum, qty) => sum + (Math.max(0, Number(qty)) || 0), 0);
+  const qualifiesForBonus = totalQty >= BONUS_QUALIFYING_QTY;
+
+  let total = 0;
+
+  for (const [id, count] of Object.entries(itemQuantities)) {
+    const qty = Math.max(0, Number(count)) || 0;
+    if (qty <= 0) continue;
+
+    const item = findItem(id);
+    if (!item) continue;
+
+    if (item.bonus) {
+      // Free if qualifies for bonus; otherwise charged at OTHER_BAG_RATE per unit
+      const unitPrice = qualifiesForBonus ? 0 : OTHER_BAG_RATE;
+      total += unitPrice * qty;
+    } else {
+      total += item.price * qty;
+    }
+  }
+
+  return total;
+}
+
+/**
+ * Calculates Room Pickup Fee according to individual item counts.
+ * @param {Object} itemQuantities - Object map of itemId to quantity count
+ * @returns {number} Pickup fee total in GHS
+ */
+function calculatePickupFee(itemQuantities = {}) {
+  let pickupTotal = 0;
+  let hasUnlistedPickupItems = false;
+
+  for (const [id, count] of Object.entries(itemQuantities)) {
+    const qty = Math.max(0, Number(count)) || 0;
+    if (qty <= 0) continue;
+
+    if (ROOM_PICKUP_RATES[id] !== undefined) {
+      pickupTotal += ROOM_PICKUP_RATES[id] * qty;
+    } else {
+      hasUnlistedPickupItems = true;
+    }
+  }
+
+  // Add one-time flat fee if any unlisted items are present
+  if (hasUnlistedPickupItems) {
+    pickupTotal += OTHER_PICKUP_FLAT_FEE;
+  }
+
+  return pickupTotal;
+}
+
+/**
+ * Calculates Grand Total bill amount.
+ * @param {Object} itemQuantities - Object map of itemId to quantity count
+ * @param {string} packageKey - Key for PACKAGES ("1m", "1.5m", "2m")
+ * @param {boolean} includePickup - True if room pickup service is required
+ * @returns {number} Grand total in GHS
+ */
+function calculateGrandTotal(itemQuantities = {}, packageKey = "1m", includePickup = false) {
+  const selectedPackage = PACKAGES[packageKey] || PACKAGES["1m"];
+  const baseTotal = calculateItemsTotal(itemQuantities);
+  const storageTotal = baseTotal * selectedPackage.multiplier;
+  const pickupFee = includePickup ? calculatePickupFee(itemQuantities) : 0;
+
+  return storageTotal + pickupFee;
 }
 
 module.exports = {
@@ -65,4 +138,9 @@ module.exports = {
   OTHER_BAG_RATE,
   BONUS_QUALIFYING_QTY,
   findItem,
+  calculateItemsTotal,
+  calculatePickupFee,
+  calculateGrandTotal,
 };
+
+

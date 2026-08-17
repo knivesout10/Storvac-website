@@ -8,6 +8,75 @@
 <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
+<!-- ==========================================================================
+     1. WELCOME OVERLAY (Triggers on Page Load)
+     ========================================================================== -->
+<div class="welcome-modal" id="welcomeModal">
+  <!-- 4K Video Background -->
+  <video id="welcomeVideo" class="welcome-video" autoplay muted playsinline loop>
+    <source src="/videos/real-truck-road.mp4" type="video/mp4">
+  </video>
+
+  <!-- Dark Vignette Overlay -->
+  <div class="video-overlay"></div>
+
+  <!-- Welcome Card -->
+  <div class="welcome-card">
+    <div class="brand-title">STORVAC <span>LOGISTICS</span></div>
+    <h2>Welcome to StorVac</h2>
+    <p>Please answer a few quick questions to personalize your session:</p>
+
+    <form id="introForm">
+      <div class="form-group">
+        <label for="userName">Your Full Name</label>
+        <input type="text" id="userName" placeholder="e.g. Alex Morgan" required>
+      </div>
+
+      <div class="form-group">
+        <label for="serviceType">Service Required</label>
+        <select id="serviceType" required>
+          <option value="">Select service...</option>
+          <option value="freight">Freight & Transport</option>
+          <option value="storage">Storage & Warehousing</option>
+          <option value="relocation">Relocation Services</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit">Enter Site &rarr;</button>
+    </form>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     2. FAREWELL OVERLAY (Hidden by default; Triggers at the End / Logout)
+     ========================================================================== -->
+<div class="welcome-modal fade-out" id="farewellModal" style="display: none;">
+  <!-- Video Background -->
+  <video class="welcome-video" autoplay muted playsinline loop>
+    <source src="/videos/real-truck-road.mp4" type="video/mp4">
+  </video>
+
+  <div class="video-overlay"></div>
+
+  <!-- Goodbye Card -->
+  <div class="welcome-card">
+    <div class="brand-title">STORVAC <span>LOGISTICS</span></div>
+    <h2>Goodbye, <span id="displayUserName" class="highlight">User</span>!</h2>
+    <p>Thank you for visiting StorVac Logistics. Logging out...</p>
+    
+    <!-- Animated Progress Bar -->
+    <div class="loader-bar">
+      <div class="loader-fill"></div>
+    </div>
+    
+    <p class="farewell-subtext">Safe travels with StorVac Logistics.</p>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     MAIN LOGIN CONTENT (Unchanged)
+     ========================================================================== -->
 <header class="site-header" id="site-header"></header>
 
 <main>
@@ -31,6 +100,7 @@
 </main>
 
 <footer id="site-footer"></footer>
+
 <script src="/js/common.js"></script>
 <script src="/js/auth.js"></script>
 </body>

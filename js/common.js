@@ -65,6 +65,70 @@ function statusBadge(status) {
   return `<span class="badge ${cls}">${label}</span>`;
 }
 
+// ==========================================================================
+// OVERLAY INTERACTION HELPERS (Welcome & Farewell)
+// ==========================================================================
+
+function initWelcomeOverlay() {
+  const welcomeModal = document.getElementById("welcomeModal");
+  const introForm = document.getElementById("introForm");
+
+  if (!welcomeModal || !introForm) return;
+
+  // Handle form submission on entry
+  introForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const userName = document.getElementById("userName")?.value.trim();
+    const serviceType = document.getElementById("serviceType")?.value;
+
+    if (userName) {
+      // Save user preference/name for session use
+      localStorage.setItem("storvac_guest_name", userName);
+    }
+
+    // Smoothly fade out the welcome overlay
+    welcomeModal.classList.add("fade-out");
+
+    setTimeout(() => {
+      welcomeModal.style.display = "none";
+    }, 1000); // Matches CSS transition duration
+  });
+}
+
+function triggerFarewellOverlay(callback) {
+  const farewellModal = document.getElementById("farewellModal");
+  const displayUserName = document.getElementById("displayUserName");
+
+  if (!farewellModal) {
+    if (callback) callback();
+    return;
+  }
+
+  // Set the guest/user name if available
+  const user = getUser();
+  const guestName = localStorage.getItem("storvac_guest_name");
+  const nameToShow = user?.name || guestName || "User";
+
+  if (displayUserName) {
+    displayUserName.textContent = nameToShow;
+  }
+
+  // Show the Farewell Overlay
+  farewellModal.style.display = "flex";
+  // Remove fade-out class to make it visible
+  setTimeout(() => farewellModal.classList.remove("fade-out"), 10);
+
+  // Play progress bar animation before calling redirect/logout
+  setTimeout(() => {
+    farewellModal.classList.add("fade-out");
+    setTimeout(() => {
+      farewellModal.style.display = "none";
+      if (callback) callback();
+    }, 1000);
+  }, 2200); // Matches loader progress duration
+}
+
 function renderHeader(activePage) {
   const el = document.getElementById("site-header");
   if (!el) return;
@@ -88,12 +152,18 @@ function renderHeader(activePage) {
       </nav>
     </div>
   `;
+
   const logoutLink = document.getElementById("logout-link");
   if (logoutLink) {
     logoutLink.addEventListener("click", (e) => {
       e.preventDefault();
-      clearToken();
-      window.location.href = "/";
+
+      // Trigger the farewell sequence before logging out
+      triggerFarewellOverlay(() => {
+        clearToken();
+        localStorage.removeItem("storvac_guest_name");
+        window.location.href = "/";
+      });
     });
   }
 }
@@ -122,4 +192,5 @@ function renderFooter() {
 document.addEventListener("DOMContentLoaded", () => {
   renderHeader();
   renderFooter();
+  initWelcomeOverlay();
 });

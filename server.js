@@ -25,4 +25,4 @@ app.get("/health", (req, res) => res.json({ ok: true }));
 
 app.listen(PORT, () => {
   console.log(`StorVac Logistics server running on http://localhost:${PORT}`);
-});
+})

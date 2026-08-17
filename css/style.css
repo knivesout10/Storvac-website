@@ -25,6 +25,7 @@ html, body {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.5;
+  scroll-behavior: smooth;
 }
 
 h1, h2, h3 {
@@ -41,6 +42,176 @@ a { color: var(--black); }
   margin: 0 auto;
   padding: 0 20px;
 }
+
+/* ==========================================================================
+   1. REALISTIC WELCOME & FAREWELL INTRO OVERLAY (4K VIDEO BACKDROP)
+   ========================================================================== */
+
+.welcome-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth fade out effect */
+.welcome-modal.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Fullscreen Background Video */
+.welcome-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Cinematic Vignette for Photorealism & Text Contrast */
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(10,10,10,0.88) 100%);
+}
+
+/* Photorealistic Glassmorphism Card Overlay */
+.welcome-card {
+  position: relative;
+  z-index: 2;
+  background: rgba(26, 26, 26, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(246, 149, 0, 0.4);
+  padding: 36px 30px;
+  border-radius: 14px;
+  max-width: 450px;
+  width: 90%;
+  color: #fff;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+.modal-step {
+  display: none;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.modal-step.active {
+  display: block;
+}
+
+.welcome-card .brand-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.welcome-card .brand-title span, 
+.welcome-card .highlight {
+  color: var(--orange);
+}
+
+.welcome-card h2 {
+  color: #fff;
+  font-size: 1.6rem;
+  margin: 12px 0 6px;
+}
+
+.welcome-card p {
+  color: #c5c3b2;
+  font-size: 0.92rem;
+  margin-bottom: 20px;
+}
+
+.welcome-card label {
+  color: #FFFDF6;
+}
+
+.welcome-card input, 
+.welcome-card select {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(246, 149, 0, 0.3);
+}
+
+.welcome-card input:focus, 
+.welcome-card select:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(246, 149, 0, 0.3);
+}
+
+.btn-submit {
+  width: 100%;
+  margin-top: 18px;
+  background: var(--orange);
+  color: #1A1A1A;
+  font-weight: 700;
+  padding: 13px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-submit:hover {
+  background: var(--orange-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(246, 149, 0, 0.3);
+}
+
+/* Farewell Step Loader Bar */
+.loader-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.loader-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--orange);
+  animation: loadProgress 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.farewell-subtext {
+  font-size: 0.85rem;
+  color: var(--orange);
+  text-align: center;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes loadProgress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* ==========================================================================
+   2. MAIN SITE STYLES (ORIGINAL CONTEXT PRESERVED)
+   ========================================================================== */
 
 /* Header */
 .site-header {
@@ -77,6 +248,7 @@ a { color: var(--black); }
 .nav-links a {
   color: #EDEBDD;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 .nav-links a:hover { color: var(--orange); }
 
@@ -91,6 +263,11 @@ main { padding: 40px 0 80px; }
   box-shadow: var(--shadow);
   padding: 28px;
   margin-bottom: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(26, 26, 26, 0.12);
 }
 
 /* Hero */
@@ -138,16 +315,18 @@ main { padding: 40px 0 80px; }
   cursor: pointer;
   text-decoration: none;
   text-align: center;
+  transition: all 0.2s ease;
 }
 .btn-primary {
   background: var(--orange);
   color: #1A1A1A;
 }
-.btn-primary:hover { background: var(--orange-deep); }
+.btn-primary:hover { background: var(--orange-deep); transform: translateY(-1px); }
 .btn-primary:disabled {
   background: #E9E2C8;
   color: #9B9280;
   cursor: not-allowed;
+  transform: none;
 }
 .btn-secondary {
   background: transparent;
@@ -175,11 +354,12 @@ input, select, textarea {
   font-size: 0.98rem;
   background: #fff;
   color: var(--ink);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 input:focus, select:focus, textarea:focus {
-  outline: 2px solid var(--orange);
-  outline-offset: 1px;
+  outline: none;
   border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(246, 149, 0, 0.2);
 }
 .field-help { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
 .error-box {
@@ -220,7 +400,9 @@ input:focus, select:focus, textarea:focus {
   gap: 12px;
   padding: 10px 0;
   border-bottom: 1px dashed var(--line);
+  transition: background 0.15s ease;
 }
+.item-row:hover { background: rgba(246, 149, 0, 0.04); }
 .item-row:last-child { border-bottom: none; }
 .item-left {
   display: flex;
@@ -233,6 +415,7 @@ input:focus, select:focus, textarea:focus {
   height: 20px;
   accent-color: var(--black);
   flex-shrink: 0;
+  cursor: pointer;
 }
 .item-name { font-size: 0.95rem; }
 .item-price {
@@ -272,10 +455,13 @@ input:focus, select:focus, textarea:focus {
   padding: 14px;
   cursor: pointer;
   text-align: center;
+  transition: all 0.2s ease;
 }
+.package-option:hover { border-color: var(--orange); }
 .package-option.selected {
   border-color: var(--orange);
   background: #FFF6E6;
+  box-shadow: 0 0 0 2px var(--orange);
 }
 .package-option .pkg-label {
   font-weight: 600;
@@ -289,7 +475,7 @@ input:focus, select:focus, textarea:focus {
 /* Sticky total bar */
 .total-bar {
   position: sticky;
-  bottom: 0;
+  bottom: 15px;
   background: var(--black);
   color: #fff;
   padding: 16px 20px;
@@ -300,16 +486,20 @@ input:focus, select:focus, textarea:focus {
   margin-top: 20px;
   gap: 16px;
   flex-wrap: wrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  z-index: 90;
 }
 .total-bar .total-amount {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--orange);
+  transition: transform 0.15s ease;
 }
+.total-bar .total-amount.updated { transform: scale(1.15); }
 .total-bar .total-label { font-size: 0.8rem; color: #D8D6C6; }
 
-/* Luggage-tag booking code (signature element, styled after StorVac's real ID label) */
+/* Luggage-tag booking code */
 .luggage-tag {
   background: #fff;
   border: 3px double var(--black);
@@ -444,4 +634,5 @@ footer .footer-tagline { color: #B8B6A4; font-size: 0.78rem; }
   .card { padding: 18px; }
   .nav-links { gap: 10px; font-size: 0.82rem; }
   .brand-text { font-size: 1rem; }
+  .welcome-card { padding: 24px 18px; }
 }
